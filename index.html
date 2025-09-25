@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bestiario — Animales y Cosas</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Bestiario</h1>
+    <p class="byline">~ por Cabeza de Borrador ~</p>
+
+    <section id="app" class="card">
+      <p class="intro">Selecciona una categoría para generar un elemento aleatorio.</p>
+
+      <div class="actions">
+        <button id="btnAnimales" class="btn">Animales</button>
+        <button id="btnCosas" class="btn">Cosas</button>
+      </div>
+
+      <div id="resultado" class="result" aria-live="polite">—</div>
+
+      <button id="downloadBtn" class="btn download">Descargar hoja para imprimir</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
