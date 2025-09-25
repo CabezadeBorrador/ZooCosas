@@ -1,0 +1,80 @@
+:root {
+  --bg: #f6f6f6;
+  --fg: #111;
+  --muted: #666;
+  --card: #ffffff;
+  --border: #e5e5e5;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 720px;
+  margin: 6rem auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+h1 {
+  margin: 0 0 .25rem 0;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.byline {
+  margin: 0 0 2rem 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.intro { margin: 0 0 1.25rem; color: var(--muted); }
+
+.actions {
+  display: flex;
+  gap: .75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 0.85rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.download { margin-top: 1rem; }
+
+.result {
+  font-size: clamp(1.5rem, 4.5vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: .02em;
+  margin: .25rem 0 0.75rem;
+  min-height: 2.5em;
+}
