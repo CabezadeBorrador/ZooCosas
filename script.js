@@ -43,86 +43,110 @@ const COSAS = [
 ];
 
 // ===============================
-// Lógica de UI
+// Utilidades y estado
 // ===============================
 const $ = (sel) => document.querySelector(sel);
-const estado = {
-  categoria: null,   // "Animales" | "Cosas"
-  valor: null        // último elemento generado
-};
+const estado = { animal: null, cosa: null };
 
-function aleatorio(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+function aleatorio(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-function mostrarResultado(texto) {
-  $("#resultado").textContent = texto || "—";
-}
+function setTexto(el, txt) { el.textContent = txt; }
 
-function generar(categoria) {
-  estado.categoria = categoria;
-  if (categoria === "Animales") {
-    estado.valor = aleatorio(ANIMALES);
-  } else if (categoria === "Cosas") {
-    estado.valor = aleatorio(COSAS);
-  } else {
-    estado.valor = null;
-  }
-  mostrarResultado(estado.valor ? `${estado.valor}` : "—");
-}
-
-function descargarHoja() {
-  const titulo = "Bestiario — Hoja para imprimir";
-  const subtitulo = estado.categoria
-    ? `${estado.categoria}: ${estado.valor ?? "—"}`
-    : "Selecciona una categoría";
-
-  const contenido = `
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<title>${titulo}</title>
-<style>
-  @page { size: A4; margin: 18mm; }
-  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color:#111; }
-  h1 { margin:0 0 6px; font-size:26px; }
-  p { margin:0 0 14px; color:#555; }
-  .sheet { border:1px solid #ddd; padding:16px; border-radius:12px; }
-  .marca { font-style: italic; color:#777; margin-bottom:14px; }
-  .campo {
-    height: 640px; border:1px dashed #bbb; border-radius:8px; margin-top:8px;
-    display:flex; align-items:center; justify-content:center;
-    font-size: 48px; font-weight: 800; letter-spacing:.02em;
-    text-align:center; padding:16px;
-  }
-  .footer { margin-top:16px; font-size:12px; color:#888; }
-</style>
-</head>
-<body>
-  <h1>Bestiario</h1>
-  <p class="marca">~ por Cabeza de Borrador ~</p>
-  <div class="sheet">
-    <p>${subtitulo}</p>
-    <div class="campo">${estado.valor ?? "—"}</div>
-  </div>
-  <div class="footer">Generado para impresión</div>
-  <script>window.onload = () => window.print();<\/script>
-</body>
-</html>`.trim();
-
-  const w = window.open("", "_blank", "noopener,noreferrer");
-  if (!w) return;
-  w.document.write(contenido);
-  w.document.close();
+function ruleta(el, fuente, durMs = 900, intervaloMs = 60) {
+  // Anima texto como “ruleta” y retorna una promesa con el valor final
+  return new Promise((resolve) => {
+    el.classList.add('spin');
+    let t = 0;
+    const timer = setInterval(() => {
+      setTexto(el, aleatorio(fuente));
+      t += intervaloMs;
+      if (t >= durMs) {
+        clearInterval(timer);
+        const final = aleatorio(fuente);
+        el.classList.remove('spin');
+        setTexto(el, final);
+        resolve(final);
+      }
+    }, intervaloMs);
+  });
 }
 
 // ===============================
-// Enlaces de eventos
+// PDF (tamaño carta) con jsPDF
+// ===============================
+async function descargarPDF() {
+  const { jsPDF } = window.jspdf || {};
+  if (!jsPDF) {
+    alert("No se pudo cargar el generador de PDF. Revisa tu conexión.");
+    return;
+  }
+
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+  const W = doc.internal.pageSize.getWidth();   // 612 pt
+  const H = doc.internal.pageSize.getHeight();  // 792 pt
+  const M = 54; // márgen ~0.75"
+
+  // Encabezado
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(28);
+  doc.text('ZooCosas', W/2, M, { align: 'center', baseline: 'top' });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(12);
+  doc.text('~ por Cabeza de Borrador ~', W/2, M + 28, { align: 'center' });
+
+  // Línea: “Nombre del personaje”
+  const yNombre = M + 70;
+  doc.setFontSize(12);
+  doc.text('Nombre del personaje:', M, yNombre);
+  // Línea para escribir (subrayado)
+  const lineaX1 = M + 150;
+  const lineaX2 = W - M;
+  doc.setLineWidth(0.8);
+  doc.line(lineaX1, yNombre + 2, lineaX2, yNombre + 2);
+
+  // Recuadro grande para dibujar
+  const boxTop = yNombre + 30;
+  const boxHeight = H - boxTop - 140; // deja espacio para el texto inferior
+  doc.setDrawColor(180);
+  doc.setLineWidth(1.2);
+  doc.roundedRect(M, boxTop, W - 2*M, boxHeight, 8, 8, 'S');
+
+  // Texto inferior centrado con Animal + Cosa
+  const animal = estado.animal ?? '—';
+  const cosa   = estado.cosa   ?? '—';
+  const combo  = `${animal}  +  ${cosa}`;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.text(combo, W/2, boxTop + boxHeight + 48, { align: 'center' });
+
+  // Archivo
+  const nombreArchivo = `ZooCosas_${animal}_${cosa}.pdf`.replace(/\s+/g, '-');
+  doc.save(nombreArchivo);
+}
+
+// ===============================
+// Eventos UI
 // ===============================
 window.addEventListener("DOMContentLoaded", () => {
-  $("#btnAnimales")?.addEventListener("click", () => generar("Animales"));
-  $("#btnCosas")?.addEventListener("click", () => generar("Cosas"));
-  $("#downloadBtn")?.addEventListener("click", descargarHoja);
-  mostrarResultado("—");
+  const btnAnimales = $("#btnAnimales");
+  const btnCosas = $("#btnCosas");
+  const outAnimal = $("#animalResult");
+  const outCosa = $("#cosaResult");
+  const btnDesc = $("#downloadBtn");
+
+  btnAnimales.addEventListener("click", async () => {
+    btnAnimales.disabled = true;
+    estado.animal = await ruleta(outAnimal, ANIMALES, 900, 60);
+    btnAnimales.disabled = false;
+  });
+
+  btnCosas.addEventListener("click", async () => {
+    btnCosas.disabled = true;
+    estado.cosa = await ruleta(outCosa, COSAS, 900, 60);
+    btnCosas.disabled = false;
+  });
+
+  btnDesc.addEventListener("click", descargarPDF);
 });
