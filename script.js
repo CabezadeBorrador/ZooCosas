@@ -86,31 +86,33 @@ async function descargarPDF() {
   const H = doc.internal.pageSize.getHeight();  // 792 pt
   const M = 54; // márgen ~0.75"
 
-  // Encabezado
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(28);
-  doc.text('ZooCosas', W/2, M, { align: 'center', baseline: 'top' });
+  // --- Encabezado con más separación ---
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(32);
+const Y_TITLE  = M + 16;          // baja un poco el título
+doc.text('ZooCosas', W/2, Y_TITLE, { align: 'center' });
 
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(16);
-  doc.text('~ por Cabeza de Borrador ~', W/2, M + 32, { align: 'center' });
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(12);
+const Y_BYLINE = Y_TITLE + 32;    // separación clara (32 pt ≈ 11 mm)
+doc.text('~ por Cabeza de Borrador ~', W/2, Y_BYLINE, { align: 'center' });
 
-  // Línea: “Nombre del personaje”
-  const yNombre = M + 70;
-  doc.setFontSize(12);
-  doc.text('Nombre del personaje:', M, yNombre);
-  // Línea para escribir (subrayado)
-  const lineaX1 = M + 150;
-  const lineaX2 = W - M;
-  doc.setLineWidth(0.8);
-  doc.line(lineaX1, yNombre + 2, lineaX2, yNombre + 2);
+// Línea: “Nombre del personaje”
+const yNombre = Y_BYLINE + 36;    // espacio extra antes de la línea
+doc.setFontSize(12);
+doc.text('Nombre del personaje:', M, yNombre);
+const lineaX1 = M + 150;
+const lineaX2 = W - M;
+doc.setLineWidth(0.8);
+doc.line(lineaX1, yNombre + 2, lineaX2, yNombre + 2);
 
-  // Recuadro grande para dibujar
-  const boxTop = yNombre + 30;
-  const boxHeight = H - boxTop - 140; // deja espacio para el texto inferior
-  doc.setDrawColor(180);
-  doc.setLineWidth(1.2);
-  doc.roundedRect(M, boxTop, W - 2*M, boxHeight, 8, 8, 'S');
+// Recuadro grande para dibujar
+const boxTop = yNombre + 30;
+const boxHeight = H - boxTop - 140;
+doc.setDrawColor(180);
+doc.setLineWidth(1.2);
+doc.roundedRect(M, boxTop, W - 2*M, boxHeight, 8, 8, 'S');
+
 
   // Texto inferior centrado con Animal + Cosa
   const animal = estado.animal ?? '—';
