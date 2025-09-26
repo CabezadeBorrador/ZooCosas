@@ -92,8 +92,8 @@ async function descargarPDF() {
   doc.text('ZooCosas', W/2, M, { align: 'center', baseline: 'top' });
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(12);
-  doc.text('~ por Cabeza de Borrador ~', W/2, M + 28, { align: 'center' });
+  doc.setFontSize(16);
+  doc.text('~ por Cabeza de Borrador ~', W/2, M + 32, { align: 'center' });
 
   // Línea: “Nombre del personaje”
   const yNombre = M + 70;
