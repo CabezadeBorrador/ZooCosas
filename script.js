@@ -38,7 +38,7 @@ const COSAS = [
   "bicicleta","patineta","patines","cometa","dron","carro","autobús","tren","avión","barco",
   // 81–100
   "lancha","motocicleta","casco","semáforo","señal","crayones","marcadores","pintura","pincel","papel",
-  "cinta adhesiva","grapadora","clip","calendario","maceta","planta","florero","regadera","cubeta","escoba",
+  "cinta adhesiva","engrapadora","clip","calendario","maceta","planta","florero","regadera","cubeta","escoba",
   "recogedor","trapo","canasta","termómetro","linterna","bateria","extensión eléctrica","enchufe","cable","cargador"
 ];
 
@@ -89,22 +89,21 @@ async function descargarPDF() {
   // --- Encabezado con más separación ---
 doc.setFont('helvetica', 'bold');
 doc.setFontSize(32);
-const Y_TITLE  = M + 16;          // baja un poco el título
-doc.text('ZooCosas', W/2, Y_TITLE, { align: 'center' });
+const Y_TITLE  = M;          // baja un poco el título
+doc.text('ZooCosas', W/2, Y_TITLE, { align: 'center', baseline: 'top' });
 
 doc.setFont('helvetica', 'normal');
 doc.setFontSize(12);
-const Y_BYLINE = Y_TITLE + 42;    // separación clara (32 pt ≈ 11 mm)
-doc.text('~ por Cabeza de Borrador ~', W/2, Y_BYLINE, { align: 'center' });
+const Y_BYLINE = Y_TITLE + 40;    // separación clara (32 pt ≈ 11 mm)
+doc.text('~ por Cabeza de Borrador ~', W/2, Y_BYLINE, { align: 'center', baseline: 'top' });
 
 // Línea: “Nombre del personaje”
-const yNombre = Y_BYLINE + 30;    // espacio extra antes de la línea
+const yNombre = Y_BYLINE + 42;    // espacio extra antes de la línea
 doc.setFontSize(12);
-doc.text('Nombre del personaje:', M, yNombre);
-const lineaX1 = M + 150;
-const lineaX2 = W - M;
-doc.setLineWidth(0.8);
-doc.line(lineaX1, yNombre + 2, lineaX2, yNombre + 2);
+doc.text('Nombre de tu personaje:', M, yNombre, { baseline: 'alphabetic' });
+  const lineaX1 = M + 150, lineaX2 = W - M;
+  doc.setLineWidth(0.8);
+  doc.line(lineaX1, yNombre + 2, lineaX2, yNombre + 2);
 
 // Recuadro grande para dibujar
 const boxTop = yNombre + 30;
