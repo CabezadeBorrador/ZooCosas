@@ -94,7 +94,7 @@ doc.text('ZooCosas', W/2, Y_TITLE, { align: 'center' });
 
 doc.setFont('helvetica', 'normal');
 doc.setFontSize(12);
-const Y_BYLINE = Y_TITLE + 38;    // separación clara (32 pt ≈ 11 mm)
+const Y_BYLINE = Y_TITLE + 42;    // separación clara (32 pt ≈ 11 mm)
 doc.text('~ por Cabeza de Borrador ~', W/2, Y_BYLINE, { align: 'center' });
 
 // Línea: “Nombre del personaje”
